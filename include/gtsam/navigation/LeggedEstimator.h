@@ -9,12 +9,6 @@
 
  * -------------------------------------------------------------------------- */
 
-/**
- * @file LeggedEstimator.h
- * @date February 2026
- * @author Frank Dellaert
- */
-
 #pragma once
 
 #include <gtsam/geometry/ExtendedPose3.h>

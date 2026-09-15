@@ -9,11 +9,6 @@
 
  * -------------------------------------------------------------------------- */
 
-/**
- * @file LeggedEstimatorFactors.h
- * @date February 2026
- * @author Frank Dellaert
- */
   
 #pragma once
 

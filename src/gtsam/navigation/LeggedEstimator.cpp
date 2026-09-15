@@ -9,11 +9,6 @@
 
  * -------------------------------------------------------------------------- */
 
-/**
- * @file LeggedEstimator.cpp
- * @date February 2026
- * @author Frank Dellaert
- */
 
 #include <gtsam/base/Matrix.h>
 #include <gtsam/base/Testable.h>
