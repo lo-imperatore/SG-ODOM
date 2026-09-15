@@ -1,0 +1,8 @@
+build/
+install/
+log/
+outputs/
+
+.agents/
+.codex/
+.claude/
