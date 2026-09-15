@@ -14,7 +14,13 @@ instant of physical touchdown.
 
 The framework separates robot-specific sensing and kinematics (a per-robot
 front end that computes forward kinematics and ground-reaction-force-based
-contact classification) from a common estimation back end.
+contact classification) from a common estimation back end. Two estimator
+configurations implement the same event-driven contact-update and contact
+interfaces: an invariant EKF (`invariant_ekf`) and a fixed-lag smoother
+(`fixed_lag_combined_bias`). See
+[Estimator Configurations](#estimator-configurations) for how they differ,
+and [Input Topics](#input-topics) for the currently supported robots (Spot,
+ANYmal, and Unitree G1).
 
 The node consumes IMU data, foot contact states, and (depending on the
 platform) joint states for leg forward kinematics and ground-reaction-force
@@ -68,21 +74,21 @@ only changes on these transitions, not on every sample. See
 
 ## Estimator Configurations
 
-Both families share the same IMU preintegration, kinematic measurement
-model, contact interface, and event-based update schedule described above;
-they differ only in state representation and correction mechanism.
+Both configurations share the same IMU preintegration, kinematic
+measurement model, contact interface, and event-based update schedule
+described above; they differ only in state representation and correction
+mechanism.
 
-- **Invariant EKF** (`invariant_ekf`): augments the
-  floating-base state with one fixed foothold slot per foot and propagates
-  mean/covariance at the IMU rate using a left-invariant error convention.
-  `invariant_ekf` applies contact corrections as a sequential EKF update;
-  
-- **Fixed-lag smoother** (`fixed_lag_combined_bias`):
-  jointly optimizes recent event-based base states and explicit
-  per-contact-episode landmarks over a fixed-lag window, connected by
-  preintegrated IMU factors. `fixed_lag_combined_bias`
-  associates a separate bias variable with each event state, connected by a
-  random-walk model, allowing the estimated bias to evolve over time.
+- **Invariant EKF** (`invariant_ekf`): augments the floating-base state
+  with one fixed foothold slot per foot, propagates mean/covariance at the
+  IMU rate using a left-invariant error convention, and applies each
+  contact correction as a sequential EKF update.
+- **Fixed-lag smoother** (`fixed_lag_combined_bias`): jointly optimizes
+  recent event-based base states and explicit per-contact-episode
+  landmarks over a fixed-lag window, connected by preintegrated IMU
+  factors. A separate IMU bias variable is associated with each event
+  state, connected by a random-walk model, allowing the estimated bias to
+  evolve over time.
 
 Exactly one variant is selected per run via `estimator.variants`; see
 [Output Topics](#output-topics).
