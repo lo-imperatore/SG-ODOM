@@ -16,19 +16,7 @@ find_package(std_msgs REQUIRED)
 # find_package(<dependency> REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/AnymalState.msg"
-  "msg/BMSState.msg"
   "msg/Contact.msg"
-  "msg/Contacts.msg"
-  "msg/GaitPattern.msg"
-  "msg/GaitPatterns.msg"
-  "msg/LegAttributes.msg"
-  "srv/GetActiveController.srv"
-  "srv/GetAvailableControllers.srv"
-  "srv/ResetStateEstimator.srv"
-  "srv/SetBaseHeight.srv"
-  "srv/SetBasePose.srv"
-  "srv/SetBoolean.srv"
-  "srv/SwitchController.srv"
   DEPENDENCIES builtin_interfaces std_msgs geometry_msgs any_msgs
 )
 if(BUILD_TESTING)
