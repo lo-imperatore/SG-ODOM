@@ -178,17 +178,17 @@ contact topics listed in [Input Topics](#input-topics) for the robot in use.
 No particular dataset is required; any bag providing those topics for a
 supported platform works.
 
-Some platforms rely on custom ROS 2 message types:
+Some platforms rely on custom ROS message types:
 
-- **Spot** (`spot_msgs/msg/FootStateArray`) and **ANYmal**
-  (`anymal_msgs/msg/AnymalState`) message packages are directly available in
-  this repository (`msgs/spot_msgs/`, `msgs/anymal_msgs/`) and are picked up
-  automatically by `colcon build` alongside this package — no extra setup
-  needed.
+- **ANYmal** (`anymal_msgs/msg/AnymalState`) and **Spot**
+  (`spot_msgs/msg/FootStateArray`) message packages are vendored at
+  `msgs/anymal_msgs/` and `msgs/spot_msgs/` and build automatically with
+  this package — see
+  [Third-Party Message Definitions](#third-party-message-definitions) for
+  where they come from.
 - **Unitree G1** (`unitree_hg/msg/LowState`) is not vendored here; it ships
-  as part of Unitree's official `unitree_ros2` SDK. Build that workspace (or
-  otherwise make the `unitree_hg` package available) before building this
-  package with `robot_type:=g1` support.
+  with Unitree's official `unitree_ros2` SDK. Build that workspace first for
+  `robot_type:=g1` support.
 
 ## Run
 
@@ -321,7 +321,22 @@ The node writes outputs under `estimator.output_dir`, which defaults to
 The `outputs/` directory is ignored by Git because these files are generated
 runtime artifacts.
 
+## Third-Party Message Definitions
+
+`msgs/anymal_msgs/` and `msgs/spot_msgs/` are vendored from other
+open-source projects, not authored by this project, and keep their own
+license:
+
+- ANYmal:
+  [leggedrobotics/holistic_fusion](https://github.com/leggedrobotics/holistic_fusion/tree/main/ros/graph_msf_anymal_msgs/msg)
+- Spot:
+  [rai-opensource/spot_ros2](https://github.com/rai-opensource/spot_ros2/tree/main/spot_msgs/msg)
+- Unitree G1's `unitree_hg` (not vendored here):
+  [unitreerobotics/unitree_ros2](https://github.com/unitreerobotics/unitree_ros2/tree/master/cyclonedds_ws/src/unitree/unitree_hg)
+
 ## License
 
 This project is licensed under the BSD-3-Clause License, following GTSAM's
-license terms. See the repository root `LICENSE` for details.
+license terms. See the repository root `LICENSE` for details. The
+third-party message definitions listed above are excluded from this license;
+see [Third-Party Message Definitions](#third-party-message-definitions).
