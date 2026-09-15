@@ -180,15 +180,13 @@ supported platform works.
 
 Some platforms rely on custom ROS message types:
 
-- **ANYmal** (`anymal_msgs/msg/AnymalState`) and **Spot**
-  (`spot_msgs/msg/FootStateArray`) message packages are vendored at
-  `msgs/anymal_msgs/` and `msgs/spot_msgs/` and build automatically with
-  this package — see
-  [Third-Party Message Definitions](#third-party-message-definitions) for
-  where they come from.
-- **Unitree G1** (`unitree_hg/msg/LowState`) is not vendored here; it ships
-  with Unitree's official `unitree_ros2` SDK. Build that workspace first for
-  `robot_type:=g1` support.
+**ANYmal** (`anymal_msgs/msg/AnymalState`), **Spot**
+(`spot_msgs/msg/FootStateArray`), and **Unitree G1**
+(`unitree_hg/msg/LowState`) each need a small custom ROS message package.
+All three are vendored at `msgs/anymal_msgs/`, `msgs/spot_msgs/`, and
+`msgs/unitree_hg/` and build automatically with this package — see
+[Third-Party Message Definitions](#third-party-message-definitions) for
+where they come from.
 
 ## Run
 
@@ -323,15 +321,15 @@ runtime artifacts.
 
 ## Third-Party Message Definitions
 
-`msgs/anymal_msgs/` and `msgs/spot_msgs/` are vendored from other
-open-source projects, not authored by this project, and keep their own
-license:
+`msgs/anymal_msgs/`, `msgs/spot_msgs/`, and `msgs/unitree_hg/` are vendored
+from other open-source projects, not authored by this project, and keep
+their own license:
 
 - ANYmal:
   [leggedrobotics/holistic_fusion](https://github.com/leggedrobotics/holistic_fusion/tree/main/ros/graph_msf_anymal_msgs/msg)
 - Spot:
   [rai-opensource/spot_ros2](https://github.com/rai-opensource/spot_ros2/tree/main/spot_msgs/msg)
-- Unitree G1's `unitree_hg` (not vendored here):
+- Unitree G1:
   [unitreerobotics/unitree_ros2](https://github.com/unitreerobotics/unitree_ros2/tree/master/cyclonedds_ws/src/unitree/unitree_hg)
 
 ## License
