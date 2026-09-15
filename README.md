@@ -205,15 +205,15 @@ In another terminal, launch the estimator with RViz:
 ```bash
 cd ~/ros2_ws
 source install/setup.bash
-ros2 launch gtsam_legged_replay_example GTSAM_legged_estimator.launch.xml
+ros2 launch gtsam_legged_replay_example sg_odom.launch.xml
 ```
 
 Select the robot-specific config from launch with `robot_type`:
 
 ```bash
-ros2 launch gtsam_legged_replay_example GTSAM_legged_estimator.launch.xml robot_type:=spot
-ros2 launch gtsam_legged_replay_example GTSAM_legged_estimator.launch.xml robot_type:=anymal
-ros2 launch gtsam_legged_replay_example GTSAM_legged_estimator.launch.xml robot_type:=g1
+ros2 launch gtsam_legged_replay_example sg_odom.launch.xml robot_type:=spot
+ros2 launch gtsam_legged_replay_example sg_odom.launch.xml robot_type:=anymal
+ros2 launch gtsam_legged_replay_example sg_odom.launch.xml robot_type:=g1
 ```
 
 ## Input Topics
@@ -244,7 +244,7 @@ and Jacobian from the HAA/HFE/KFE joint positions, reconstructs GRF from
 contact classifier. Select either method at launch with:
 
 ```bash
-ros2 launch gtsam_legged_replay_example GTSAM_legged_estimator.launch.xml \
+ros2 launch gtsam_legged_replay_example sg_odom.launch.xml \
   robot_type:=anymal anymal_contact_classifier:=state
 ```
 
