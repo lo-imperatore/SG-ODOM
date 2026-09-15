@@ -254,7 +254,7 @@ and classified with separate contact-on/contact-off thresholds. The thresholds,
 damping, optional FK height guard, and motor indices are configurable in
 `config/g1_legged_estimator.yaml`. A dedicated pressure/contact message should
 replace this model-based estimate when one is available on the robot.
-```
+
 
 When `topics.read_joint_states: true`, the node uses `/joint_states` to compute
 Spot foot positions with forward kinematics. If this is disabled or the joint
