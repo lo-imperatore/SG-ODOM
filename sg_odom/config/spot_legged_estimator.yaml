@@ -53,7 +53,7 @@ GTSAM_legged_estimator:
       spot_joint_torque_grf_damping: 0.02
       spot_joint_torque_scale: 1.0
       # URDF inertias provide gravity and velocity-bias compensation.
-      spot_urdf_path: /ros2_ws/src/SG-ODOM/urdf/spot_pronto_simple.urdf.xacro
+      spot_urdf_path: urdf/spot_pronto_simple.urdf.xacro  # relative to the package share dir, or absolute
       # Convert the URDF foot-center frame to Spot's reported contact point.
       # Derived from all 16,759 synchronized samples in the Atrium bag.
       spot_contact_point_z_offset: -0.03

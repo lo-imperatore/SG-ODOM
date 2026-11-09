@@ -2,9 +2,12 @@
 <package format="3">
   <name>unitree_hg</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>
+    Minimal vendored subset of Unitree humanoid messages (LowState, IMUState,
+    MotorState) from unitreerobotics/unitree_ros2. See README.md.
+  </description>
   <maintainer email="unitree@unitree.com">Unitree</maintainer>
-  <license>BSD 3-Clause License</license>
+  <license>BSD-3-Clause</license>
 
   <build_depend>rosidl_default_generators</build_depend>
   <exec_depend>rosidl_default_runtime</exec_depend>

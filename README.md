@@ -62,7 +62,7 @@ efforts) and its short-horizon variation:
 - A contact is accepted only once the force is sufficiently loaded and its
   variation has settled, continuously, for a validation interval — the
   per-robot `*_contact_force_on`, `*_contact_max_force_delta`, and
-  `*_contact_force_window_size` parameters (see `config/*.yaml`).
+  `*_contact_force_window_size` parameters (see `sg_odom/config/*.yaml`).
 - A contact is released as soon as the force drops and stays below the
   `*_contact_force_off` threshold for the configured off-sample count
   (`*_contact_force_delta_off_samples`).
@@ -116,14 +116,14 @@ GTSAM release.
 
 The included `Dockerfile` / `docker-compose.yaml` build a ROS 2 image with
 GTSAM compiled from source (`develop` branch, `GTSAM_BUILD_UNSTABLE=ON`), so
-no host-side GTSAM install is needed. From this package's directory:
+no host-side GTSAM install is needed. From the repository root:
 
 ```bash
 docker compose build
 docker compose run --rm gtsam_legged_estimator
 ```
 
-This mounts the package read/write at `/ros2_ws/src/SG-ODOM`
+This mounts the repository read/write at `/ros2_ws/src/SG-ODOM`
 and drops you into a shell at `/ros2_ws`. Build it there:
 
 ```bash
@@ -143,7 +143,7 @@ ROS_DISTRO=humble GTSAM_GIT_REF=<commit-sha> docker compose build
 
 ## Build (native, without Docker)
 
-Create a ROS 2 workspace, clone this package into its `src/` directory, and
+Create a ROS 2 workspace, clone this repository into its `src/` directory, and
 build from the workspace root:
 
 ```bash
@@ -154,6 +154,25 @@ cd ~/ros2_ws
 colcon build
 source install/setup.bash
 ```
+
+The repository contains several ROS 2 packages, which `colcon build`
+discovers and builds in dependency order:
+
+```text
+SG-ODOM/
+├── sg_odom/                    estimator node (package gtsam_legged_replay_example)
+│   ├── config/  launch/  urdf/
+│   └── include/  src/
+└── msgs/
+    ├── legged_estimator_msgs/  this project's diagnostic messages
+    ├── any_msgs/               vendored (ANYmal)
+    ├── anymal_msgs/            vendored (ANYmal)
+    ├── spot_msgs/              vendored (Spot)
+    └── unitree_hg/             vendored (Unitree G1)
+```
+
+URDF paths in the configs (`*_urdf_path`) are resolved relative to the
+installed package share directory unless given as absolute paths.
 
 This requires a source build of GTSAM on the host first (see
 [Dependencies](#dependencies)). If GTSAM is installed into a standard CMake
@@ -184,9 +203,15 @@ Some platforms rely on custom ROS message types:
 (`spot_msgs/msg/FootStateArray`), and **Unitree G1**
 (`unitree_hg/msg/LowState`) each need a small custom ROS message package.
 All three are vendored at `msgs/anymal_msgs/`, `msgs/spot_msgs/`, and
-`msgs/unitree_hg/` and build automatically with this package — see
+`msgs/unitree_hg/` and build automatically with this package. ANYmal
+additionally needs `any_msgs/msg/ExtendedJointState` (nested in
+`AnymalState`), vendored as a minimal subset at `msgs/any_msgs/`. See
 [Third-Party Message Definitions](#third-party-message-definitions) for
 where they come from.
+
+The node's own diagnostic messages (contact-classifier diagnostics and IMU
+bias) are defined in `msgs/legged_estimator_msgs/`, which is part of this
+project and also builds automatically.
 
 ## Run
 
@@ -216,8 +241,8 @@ ros2 launch gtsam_legged_replay_example sg_odom.launch.xml robot_type:=g1
 
 ## Input Topics
 
-Robot-specific defaults are defined in `config/spot_legged_estimator.yaml`,
-`config/anymal_legged_estimator.yaml`, and `config/g1_legged_estimator.yaml`.
+Robot-specific defaults are defined in `sg_odom/config/spot_legged_estimator.yaml`,
+`sg_odom/config/anymal_legged_estimator.yaml`, and `sg_odom/config/g1_legged_estimator.yaml`.
 
 ```text
 Spot:
@@ -256,7 +281,7 @@ force or contact flags, it infers contact from the G1 leg Jacobian and
 `tau_est` via `tau = J^T * wrench`. The vertical wrench is filtered
 and classified with separate contact-on/contact-off thresholds. The thresholds,
 damping, optional FK height guard, and motor indices are configurable in
-`config/g1_legged_estimator.yaml`. A dedicated pressure/contact message should
+`sg_odom/config/g1_legged_estimator.yaml`. A dedicated pressure/contact message should
 replace this model-based estimate when one is available on the robot.
 
 
@@ -321,16 +346,24 @@ runtime artifacts.
 
 ## Third-Party Message Definitions
 
-`msgs/anymal_msgs/`, `msgs/spot_msgs/`, and `msgs/unitree_hg/` are vendored
-from other open-source projects, not authored by this project, and keep
-their own license:
+`msgs/anymal_msgs/`, `msgs/any_msgs/`, `msgs/spot_msgs/`, and
+`msgs/unitree_hg/` are vendored from other open-source projects, not
+authored by this project. Only the minimal subset of messages needed by the
+estimator is included. Each folder contains the upstream `LICENSE` and a
+`README.md` with the pinned source commit and any changes from upstream.
 
-- ANYmal:
-  [leggedrobotics/holistic_fusion](https://github.com/leggedrobotics/holistic_fusion/tree/main/ros/graph_msf_anymal_msgs/msg)
-- Spot:
-  [rai-opensource/spot_ros2](https://github.com/rai-opensource/spot_ros2/tree/main/spot_msgs/msg)
-- Unitree G1:
-  [unitreerobotics/unitree_ros2](https://github.com/unitreerobotics/unitree_ros2/tree/master/cyclonedds_ws/src/unitree/unitree_hg)
+| Package | Messages | Source | License |
+|---|---|---|---|
+| `anymal_msgs` | `AnymalState`, `Contact` | [leggedrobotics/holistic_fusion](https://github.com/leggedrobotics/holistic_fusion/tree/main/ros/holistic_fusion_anymal_msgs/msg) | BSD-3-Clause |
+| `any_msgs` | `ExtendedJointState` | [leggedrobotics/holistic_fusion](https://github.com/leggedrobotics/holistic_fusion/tree/main/ros/holistic_fusion_anymal_msgs/msg) | BSD-3-Clause |
+| `spot_msgs` | `FootState`, `FootStateArray` | [rai-opensource/spot_ros2](https://github.com/rai-opensource/spot_ros2/tree/main/spot_msgs/msg) | MIT |
+| `unitree_hg` | `LowState`, `IMUState`, `MotorState` | [unitreerobotics/unitree_ros2](https://github.com/unitreerobotics/unitree_ros2/tree/master/cyclonedds_ws/src/unitree/unitree_hg) | BSD-3-Clause |
+
+The ANYmal messages were ported from a ROS 1 package; upstream ships all
+three in `holistic_fusion_anymal_msgs`, and here `ExtendedJointState` is
+split into `any_msgs` so the type names match ROS 2 ANYmal recordings.
+The vendored `spot_msgs/FootStateArray` adds a `std_msgs/Header` that the
+upstream definition does not have; see `msgs/spot_msgs/README.md`.
 
 ## License
 

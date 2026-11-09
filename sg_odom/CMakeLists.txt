@@ -18,6 +18,7 @@ find_package(ament_cmake REQUIRED)
 find_package(any_msgs)
 find_package(anymal_msgs)
 find_package(unitree_hg)
+find_package(ament_index_cpp REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(legged_estimator_msgs REQUIRED)
@@ -47,6 +48,9 @@ add_executable(LeggedEstimatorRos2Node
   src/SpotContactAdapter.cpp
   src/StabilityGatedContactClassifier.cpp
 )
+
+target_compile_definitions(LeggedEstimatorRos2Node PRIVATE
+  SG_ODOM_PACKAGE_NAME="${PROJECT_NAME}")
 
 if(any_msgs_FOUND AND anymal_msgs_FOUND AND pinocchio_FOUND)
   target_sources(LeggedEstimatorRos2Node PRIVATE src/AnymalContactAdapter.cpp)
@@ -79,6 +83,7 @@ target_link_libraries(LeggedEstimatorRos2Node
   gtsam_unstable
 )
 ament_target_dependencies(LeggedEstimatorRos2Node
+  ament_index_cpp
   builtin_interfaces
   geometry_msgs
   legged_estimator_msgs

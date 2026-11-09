@@ -44,7 +44,7 @@
       anymal_contact_force_delta_off_samples: 3
       anymal_contact_use_absolute_force_z: true
       # URDF inertias are used for Pronto's default h(q, qdot) compensation.
-      anymal_urdf_path: /ros2_ws/src/SG-ODOM/urdf/anymal.urdf
+      anymal_urdf_path: urdf/anymal.urdf  # relative to the package share dir, or absolute
     estimator:
       variants: [invariant_ekf]  # exactly one of: invariant_ekf, invariant_graph, fixed_lag_single_bias, fixed_lag_combined_bias
       output_dir: ./outputs/live

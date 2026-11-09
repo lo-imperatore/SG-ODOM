@@ -36,6 +36,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # ---------------------------------------------------------------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-${ROS_DISTRO}-rclcpp \
+    ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
     ros-${ROS_DISTRO}-std-msgs \
     ros-${ROS_DISTRO}-sensor-msgs \
     ros-${ROS_DISTRO}-nav-msgs \
@@ -101,7 +102,18 @@ ARG USERNAME=ros
 ARG USER_UID=1000
 ARG USER_GID=1000
 
-RUN if ! getent group ${USER_GID} >/dev/null; then \
+# Recent ROS base images (Ubuntu 24.04) ship a default `ubuntu` user/group
+# with UID/GID 1000, which collides with the usual host UID. Remove any
+# pre-existing user/group holding the requested IDs before creating ours.
+RUN existing_user="$(getent passwd ${USER_UID} | cut -d: -f1)" && \
+    if [ -n "${existing_user}" ] && [ "${existing_user}" != "${USERNAME}" ]; then \
+      userdel -r "${existing_user}" 2>/dev/null || userdel "${existing_user}"; \
+    fi && \
+    existing_group="$(getent group ${USER_GID} | cut -d: -f1)" && \
+    if [ -n "${existing_group}" ] && [ "${existing_group}" != "${USERNAME}" ]; then \
+      groupdel "${existing_group}"; \
+    fi && \
+    if ! getent group ${USER_GID} >/dev/null; then \
       groupadd --gid ${USER_GID} ${USERNAME}; \
     fi && \
     if ! id -u ${USERNAME} >/dev/null 2>&1; then \

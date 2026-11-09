@@ -14,13 +14,12 @@
  * See LICENSE for the license information.
  * -------------------------------------------------------------------------- */
 
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <builtin_interfaces/msg/time.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
-#ifdef GTSAM_LEGGED_HAVE_ANYMAL_MSGS
 #include <legged_estimator_msgs/msg/anymal_contact_diagnostics.hpp>
 #include <legged_estimator_msgs/msg/spot_contact_diagnostics.hpp>
 #include <legged_estimator_msgs/msg/estimator_imu_bias.hpp>
-#endif
 #include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/path.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -64,6 +63,18 @@ namespace gtsam {
 namespace {
 
 namespace fs = std::filesystem;
+
+// Relative paths (e.g. "urdf/anymal.urdf") are resolved against this
+// package's installed share directory; absolute paths are used unchanged.
+std::string resolvePackagePath(const std::string& path) {
+  if (path.empty() || fs::path(path).is_absolute()) {
+    return path;
+  }
+  return (fs::path(ament_index_cpp::get_package_share_directory(
+              SG_ODOM_PACKAGE_NAME)) /
+          path)
+      .string();
+}
 
 using sensor_msgs::msg::Imu;
 using sensor_msgs::msg::JointState;
@@ -633,9 +644,8 @@ class LeggedEstimatorRos2Node : public rclcpp::Node {
             "conversion.spot_joint_torque_grf_damping", 0.02);
         spotOptions.jointTorqueScale = declare_parameter<double>(
             "conversion.spot_joint_torque_scale", 1.0);
-        spotOptions.urdfPath = declare_parameter<std::string>(
-            "conversion.spot_urdf_path",
-            "/ros2_ws/src/SG-ODOM/urdf/spot_pronto_simple.urdf.xacro");
+        spotOptions.urdfPath = resolvePackagePath(declare_parameter<std::string>(
+            "conversion.spot_urdf_path", "urdf/spot_pronto_simple.urdf.xacro"));
         spotOptions.contactPointZOffset = declare_parameter<double>(
             "conversion.spot_contact_point_z_offset", -0.03305);
         if (windowSize < 1 || onSamples < 1 || offSamples < 1) {
@@ -677,9 +687,9 @@ class LeggedEstimatorRos2Node : public rclcpp::Node {
             "conversion.anymal_joint_torque_grf_damping", 0.02);
         anymalOptions.jointTorqueScale = declare_parameter<double>(
             "conversion.anymal_joint_torque_scale", 1.0);
-        anymalOptions.anymalUrdfPath = declare_parameter<std::string>(
-            "conversion.anymal_urdf_path",
-            "/ros2_ws/src/SG-ODOM/urdf/anymal.urdf");
+        anymalOptions.anymalUrdfPath =
+            resolvePackagePath(declare_parameter<std::string>(
+                "conversion.anymal_urdf_path", "urdf/anymal.urdf"));
         if (anymalForceWindowSize < 1 || anymalOnSamples < 1 ||
             anymalDeltaOffSamples < 1) {
           throw std::runtime_error(
