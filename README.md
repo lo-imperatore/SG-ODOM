@@ -1,4 +1,6 @@
-# SG-ODOM: Event-Driven Proprioceptive State Estimation with Stability-Gated Contact Updates for Legged Robots
+<div align="center">
+  <h1>SG-ODOM: Event-Driven Proprioceptive State Estimation with Stability-Gated Contact Updates for Legged Robots</h1>
+</div>
 
 SG-ODOM is a GTSAM-based, event-driven proprioceptive odometry framework
 for legged robots. Rather than applying a kinematic correction at every
@@ -26,6 +28,19 @@ The node consumes IMU data, foot contact states, and (depending on the
 platform) joint states for leg forward kinematics and ground-reaction-force
 estimation. It publishes odometry, path, and foot contact markers for
 RViz, and writes CSV/TUM trajectory outputs for later inspection.
+
+## Overview
+
+<div align="center">
+  <img alt="Physical versus stable contact over a stance phase" src="docs/images/stability_gate.png" height="260" hspace="6" vspace="6" />
+  <img alt="Event-based contact updates for a trot gait" src="docs/images/event_updates.png" height="260" hspace="6" vspace="6" />
+</div>
+
+**Left:** a foot is accepted for estimation only once the ground-reaction
+force has settled after impact, not at the first instant of physical
+touchdown. **Right:** each stable touchdown (▲) triggers an immediate
+kinematic correction, and timeout updates (○) keep IMU-only propagation
+shorter than Δt<sub>max</sub>.
 
 ## Method
 
@@ -190,30 +205,14 @@ Alternatively, point CMake directly at the GTSAM package config directory:
 export GTSAM_DIR=/path/to/gtsam/install/lib/cmake/GTSAM
 ```
 
-## Dataset
-
-The node replays recorded ROS 2 bag sequences containing the IMU, joint, and
-contact topics listed in [Input Topics](#input-topics) for the robot in use.
-No particular dataset is required; any bag providing those topics for a
-supported platform works.
-
-Some platforms rely on custom ROS message types:
-
-**ANYmal** (`anymal_msgs/msg/AnymalState`), **Spot**
-(`spot_msgs/msg/FootStateArray`), and **Unitree G1**
-(`unitree_hg/msg/LowState`) each need a small custom ROS message package.
-All three are vendored at `msgs/anymal_msgs/`, `msgs/spot_msgs/`, and
-`msgs/unitree_hg/` and build automatically with this package. ANYmal
-additionally needs `any_msgs/msg/ExtendedJointState` (nested in
-`AnymalState`), vendored as a minimal subset at `msgs/any_msgs/`. See
-[Third-Party Message Definitions](#third-party-message-definitions) for
-where they come from.
-
-The node's own diagnostic messages (contact-classifier diagnostics and IMU
-bias) are defined in `msgs/legged_estimator_msgs/`, which is part of this
-project and also builds automatically.
-
 ## Run
+
+The node replays recorded ROS 2 bags. Any bag that provides the topics
+listed in [Input Topics](#input-topics) for a supported robot works. The
+framework was evaluated on three platforms: Boston Dynamics Spot
+(GaRLILEO dataset), ANYbotics ANYmal D
+([GrandTour](https://arxiv.org/abs/2602.18164) dataset), and a Unitree G1
+humanoid (self-collected sequences).
 
 In one terminal, replay a recorded ROS 2 bag:
 
