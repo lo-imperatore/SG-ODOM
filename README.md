@@ -210,7 +210,7 @@ export GTSAM_DIR=/path/to/gtsam/install/lib/cmake/GTSAM
 The node replays recorded ROS 2 bags. Any bag that provides the topics
 listed in [Input Topics](#input-topics) for a supported robot works. The
 framework was evaluated on three platforms: Boston Dynamics Spot
-(GaRLILEO dataset), ANYbotics ANYmal D
+([GaRLILEO](https://garlileo.github.io/GaRLILEO/) dataset), ANYbotics ANYmal D
 ([GrandTour](https://arxiv.org/abs/2602.18164) dataset), and a Unitree G1
 humanoid (self-collected sequences).
 
