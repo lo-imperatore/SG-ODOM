@@ -20,14 +20,34 @@ contact classification) from a common estimation back end. Two estimator
 configurations implement the same event-driven contact-update and contact
 interfaces: an invariant EKF (`invariant_ekf`) and a fixed-lag smoother
 (`fixed_lag_combined_bias`). See
-[Estimator Configurations](#estimator-configurations) for how they differ,
-and [Input Topics](#input-topics) for the currently supported robots (Spot,
-ANYmal, and Unitree G1).
+[Estimator Configurations](#estimator-configurations) for how they differ, 
+and [Tested Platforms](#tested-platforms) for the three robots it has been
+deployed on (Spot, ANYmal D, and Unitree G1).
 
 The node consumes IMU data, foot contact states, and (depending on the
 platform) joint states for leg forward kinematics and ground-reaction-force
 estimation. It publishes odometry, path, and foot contact markers for
 RViz, and writes CSV/TUM trajectory outputs for later inspection.
+
+## Tested Platforms
+
+SG-ODOM has been deployed and evaluated on **three different legged
+platforms**: two quadrupeds and one humanoid, each with a different
+sensor suite. The same estimation back end runs on all three. Only the
+robot-specific front end (forward kinematics and contact classification)
+and the YAML config change between robots.
+
+<div align="center">
+  <img alt="SG-ODOM deployed on Boston Dynamics Spot, ANYbotics ANYmal D, and Unitree G1" src="docs/images/platforms.jpg" width="720" />
+  <br/>
+  <em>Boston Dynamics Spot (left), ANYbotics ANYmal D (center), Unitree G1 humanoid (right).</em>
+</div>
+
+| Platform | Type | Data | Contact sources | Config |
+|---|---|---|---|---|
+| Boston Dynamics Spot | Quadruped | [GaRLILEO](https://garlileo.github.io/GaRLILEO/) dataset | Foot state or joint-torque GRF | `spot_legged_estimator.yaml` |
+| ANYbotics ANYmal D | Quadruped | [GrandTour](https://arxiv.org/abs/2602.18164) dataset | Robot contact state or joint-torque GRF | `anymal_legged_estimator.yaml` |
+| Unitree G1 | Humanoid | Self-collected sequences | Joint-torque GRF (`tau_est`) | `g1_legged_estimator.yaml` |
 
 ## Overview
 
@@ -208,11 +228,9 @@ export GTSAM_DIR=/path/to/gtsam/install/lib/cmake/GTSAM
 ## Run
 
 The node replays recorded ROS 2 bags. Any bag that provides the topics
-listed in [Input Topics](#input-topics) for a supported robot works. The
-framework was evaluated on three platforms: Boston Dynamics Spot
-([GaRLILEO](https://garlileo.github.io/GaRLILEO/) dataset), ANYbotics ANYmal D
-([GrandTour](https://arxiv.org/abs/2602.18164) dataset), and a Unitree G1
-humanoid (self-collected sequences).
+listed in [Input Topics](#input-topics) for a supported robot works. See
+[Tested Platforms](#tested-platforms) for the three robots and datasets the
+framework was evaluated on.
 
 In one terminal, replay a recorded ROS 2 bag:
 
